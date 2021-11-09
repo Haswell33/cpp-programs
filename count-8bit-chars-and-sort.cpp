@@ -133,5 +133,3 @@ int main(int argc, char *argv[])
     cout << endl << endl << "Zakonczono prace programu.";
 	return 0;
 }
-
-//Karol Siedlaczek Zad 1
