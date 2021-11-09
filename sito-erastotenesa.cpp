@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+//liczby pierwsze
 
 using namespace std;
 
