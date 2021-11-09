@@ -1,10 +1,11 @@
-//Zad 1
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <cstdlib>
 
 #define MAX 256
+
+//const int max = 256;
 
 using namespace std;
 
@@ -14,31 +15,21 @@ struct element
 {
     unsigned char znak;
     int ilosc_wystapien;
-}   tablica_znakow[256];
+}   tablica_znakow[MAX];
 
 void sortowanie_babelkowe()
 {	    
-	for(int i=0; i<256; i++)
+	for(int i=0; i < MAX; i++)
 	{	
-        for(int j=0; j<256; j++)
+        for(int j=0; j < MAX - 1; j++)
 		{
-            if(tablica_znakow[i].ilosc_wystapien>tablica_znakow[j].ilosc_wystapien)
+            if(tablica_znakow[i].ilosc_wystapien > tablica_znakow[j].ilosc_wystapien ||
+			   tablica_znakow[i].ilosc_wystapien == tablica_znakow[j].ilosc_wystapien && tablica_znakow[i].znak < tablica_znakow[j].znak)
 			{
                 swap(tablica_znakow[i], tablica_znakow[j]);
-            }
+            }	
         }
     }
-    
-    for(int i=0; i<256; i++)
-	{
-        for(int j=0; j<256; j++)
-		{
-            if(tablica_znakow[i].znak<tablica_znakow[j].znak && tablica_znakow[i].ilosc_wystapien==tablica_znakow[j].ilosc_wystapien)
-			{
-                swap(tablica_znakow[i], tablica_znakow[j]);
-            }
-        }
-	}
 }
 
 void zapisz_znak_licz(string nazwa_pliku_wejsciowego, string nowa_nazwa_pliku)
@@ -48,12 +39,12 @@ void zapisz_znak_licz(string nazwa_pliku_wejsciowego, string nowa_nazwa_pliku)
 	nowa_nazwa_pliku = nazwa_pliku_wejsciowego + ".licz";
     plik_licz.open(nowa_nazwa_pliku.c_str(), ios::out);
 
-    for(int i=0;i<256;i++)
+    for(int i=0;i < MAX; i++)
 	{
         if(tablica_znakow[i].ilosc_wystapien!=0)     
             plik_licz << (int)tablica_znakow[i].znak << " " << tablica_znakow[i].ilosc_wystapien << endl;
     }
-    cout << endl << "Zliczono ilosc uzytych symboli(bajtow 8-bitowych) wraz z ich iloscia wystapien i zapisano je w pliku " << nowa_nazwa_pliku;
+    cout << "Zliczono ilosc uzytych symboli(bajtow 8-bitowych) wraz z ich iloscia wystapien i zapisano je w pliku " << nowa_nazwa_pliku << endl;
     plik_licz.close();
 }
 
@@ -65,12 +56,12 @@ void zapisz_znak_msort(string nazwa_pliku_wejsciowego, string nowa_nazwa_pliku)
     plik_msort.open(nowa_nazwa_pliku.c_str(), ios::out);
     sortowanie_babelkowe();
 	
-	for(int i=0;i<256;i++)
+	for(int i=0; i<MAX; i++)
 	{
         if(tablica_znakow[i].ilosc_wystapien!=0)
             plik_msort << (int)tablica_znakow[i].znak << " " << tablica_znakow[i].ilosc_wystapien << endl;
     }
-    cout << endl << "Zliczono ilosc uzytych symboli(bajtow 8-bitowych) wraz z ich iloscia wystapien i posortowano je malejaco w pliku " << nowa_nazwa_pliku;
+    cout << "Zliczono ilosc uzytych symboli(bajtow 8-bitowych) wraz z ich iloscia wystapien i posortowano je malejaco w pliku " << nowa_nazwa_pliku << endl;
 	plik_msort.close();		
 }
 
@@ -80,8 +71,8 @@ void zapisz_znak_ile(string nazwa_pliku_wejsciowego, string nowa_nazwa_pliku, in
 	nazwa_pliku_wejsciowego.erase(nazwa_pliku_wejsciowego.find_last_of("."), nazwa_pliku_wejsciowego.length());
 	nowa_nazwa_pliku = nazwa_pliku_wejsciowego + ".ile";
     plik_ile.open(nowa_nazwa_pliku.c_str(), ios::out);
-	plik_ile << ilosc_wystapien;
-	cout << endl << "Zliczono ilosc uzytych symboli(bajtow 8-bitowych) w pliku " << nowa_nazwa_pliku;
+	plik_ile << ilosc_wystapien << endl;
+	cout << "Zliczono ilosc uzytych symboli(bajtow 8-bitowych) w pliku " << nowa_nazwa_pliku << endl;
 	plik_ile.close();
 }
 
@@ -97,7 +88,7 @@ int main(int argc, char *argv[])
 	}
 	nazwa_pliku_wejsciowego = argv[1];
 	
-	for(int i=0; i<256; i++)
+	for(int i=0; i < MAX; i++)
 	{
         tablica_znakow[i].znak = i;
         tablica_znakow[i].ilosc_wystapien = 0;
@@ -108,7 +99,7 @@ int main(int argc, char *argv[])
 	wynik=plik_wej.good();
     if(!plik_wej.good())
 	{
-        cout << "Blad otwierania pliku wejsciowego!";
+        cout << "Blad otwierania pliku wejsciowego!" << endl;
         return 1;
     }
     unsigned char bufor;
@@ -116,20 +107,23 @@ int main(int argc, char *argv[])
    
 	while(true)
     {
+    	bufor = plik_wej.get();
+    	
     	wynik=plik_wej.good();
     	if(!wynik)
 		{
-			cout << "Odczytano plik wejsciowy" << endl;
+			cout << "Odczytano plik wejsciowy" << endl << endl;
 			break;
 		}
-        bufor=plik_wej.get();
+        
         ilosc_wystapien++;
         tablica_znakow[(int)bufor].ilosc_wystapien++;      
     }
+    
     zapisz_znak_licz(nazwa_pliku_wejsciowego, nowa_nazwa_pliku);
     zapisz_znak_msort(nazwa_pliku_wejsciowego, nowa_nazwa_pliku);
     zapisz_znak_ile(nazwa_pliku_wejsciowego, nowa_nazwa_pliku, ilosc_wystapien);
     plik_wej.close();
-    cout << endl << endl << "Zakonczono prace programu.";
+    cout << endl << "Zakonczono prace programu." << endl;
 	return 0;
 }
